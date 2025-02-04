@@ -16,18 +16,28 @@ public class UserApi {
         this.userService = userService;
     }
 
+
+    /**
+     * Retrieves a user by username and password.
+     */
     @GetMapping(path = "getUser")
-    public User getUser(@RequestParam(required = true) String userName, @RequestParam(required = true) String password) {
+    public User getUser(@RequestParam String userName, @RequestParam String password) {
         return userService.getUserByUserNameAndPassword(userName, password);
     }
 
 
+    /**
+     * Creates a new user with username and password.
+     */
     @PostMapping(path = "saveUser")
     public void saveUser(@RequestParam(required = true) String userName, @RequestParam(required = true) String password) {
         userService.saveUser(userName, password);
     }
 
 
+    /**
+     * Updates user preferences.
+     */
     @PostMapping(path = "updateUser")
     public void updateUser(@RequestParam(required = true) String userName,
             @RequestParam(required = true) String password,

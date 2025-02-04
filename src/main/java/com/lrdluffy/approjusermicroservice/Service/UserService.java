@@ -18,6 +18,10 @@ public class UserService {
     }
 
 
+    /**
+     * Retrieves a user by username and password.
+     * Throws an exception if the user is not found.
+     */
     public User getUserByUserNameAndPassword(String userName, String password) {
         return userDao.findByUserNameAndPassword(userName, password).orElseThrow(
                 () -> {
@@ -26,25 +30,32 @@ public class UserService {
         );
     }
 
-    public void saveUser(String userName, String password) {
-        Optional<User> userOptional = userDao.findByUserName(userName);
 
-        if (userOptional.isPresent()) {
-            throw new IllegalStateException("User with this Username alreay exists!!!");
-        } else {
-            userDao.save(new User(userName, password));
+    /**
+     * Saves a new user if the username is unique.
+     * Throws an exception if the username already exists.
+     */
+    public void saveUser(String userName, String password) {
+        if (userDao.findByUserName(userName).isPresent()) {
+            throw new IllegalStateException("User with this username already exists!");
         }
+        userDao.save(new User(userName, password));
     }
 
+
+    /**
+     * Updates user preferences if the user exists.
+     * Throws an exception if the user is not found.
+     */
     public void updateUser(String userName, String password, Integer minReleaseYear
             , Integer minDuration, String preferredGenre, Double minImdbRating,
                            Integer minMetaScore, Long minVotesNumber, String preferredDirector,
                            String preferredCast) {
 
-        Optional<User> userOptional = userDao.findByUserNameAndPassword(userName, password);
+        User userToUpdate = userDao.findByUserNameAndPassword(userName, password)
+                .orElseThrow(() -> new IllegalStateException("User not found!"));
 
-        User userToUpdate = userOptional.get();
-
+        // Update user preferences
         userToUpdate.setMinReleaseYear(minReleaseYear);
         userToUpdate.setMinDuration(minDuration);
         userToUpdate.setPreferredGenre(preferredGenre);
@@ -55,7 +66,5 @@ public class UserService {
         userToUpdate.setPreferredCast(preferredCast);
 
         userDao.save(userToUpdate);
-
     }
-
 }
